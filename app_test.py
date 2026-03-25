@@ -1,4 +1,3 @@
-import ssl
 from flask import Flask,render_template,request,redirect,session
 import sqlite3
 app=Flask(__name__)
