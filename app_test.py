@@ -8,10 +8,9 @@ def get_db():
     return db
 @app.route("/")
 def home():
-    user_id=[]
     user_id=session.get("user_id")
     if not "user_id" in session:
-        return redirect("/register")
+        return redirect("/login")
     db=get_db()
     liked_posts=[]
     if user_id:
@@ -148,7 +147,7 @@ def comment(post_id):
 def profile(user_id):
     db = get_db()
     user = db.execute(
-        "SELECT username FROM users WHERE id=?", 
+        "SELECT id,username FROM users WHERE id=?", 
         (user_id,)
     ).fetchone()
     posts = db.execute(
@@ -185,6 +184,44 @@ def edit_profile():
     ).fetchone()
     db.close()
     return render_template("edit_profile.html",user=user)
+@app.route("/search")
+def search():
+    if "user_id" not in session:
+        return redirect("/register")
+    query=request.args.get("q","")
+    user_id=session.get("user_id")
+    db=get_db()
+    users=db.execute(
+        "SELECT id,username FROM users WHERE username LIKE ?",
+        (f"%{query}%",)
+    ).fetchall()
+    search_posts=db.execute(
+        """SELECT posts.id,posts.content,posts.created_at,users.username,posts.user_id
+        FROM posts
+        JOIN users ON posts.user_id=users.id
+        WHERE posts.content LIKE ?
+        ORDER BY posts.created_at DESC""",
+        (f"%{query}%",)
+    ).fetchall()
+    liked_posts=db.execute(
+        "SELECT post_id FROM likes WHERE user_id=?",
+        (user_id,)
+    ).fetchall()
+    liked_posts=[lp[0] for lp in liked_posts]
+    posts=db.execute("""
+    SELECT posts.id,posts.content,posts.created_at,users.username,posts.user_id,posts.likes
+    FROM posts
+    JOIN users ON posts.user_id=users.id
+    ORDER BY posts.created_at DESC
+    """).fetchall()
+    comments=db.execute("""
+    SELECT comments.post_id,comments.content,users.username,users.id
+    FROM comments
+    JOIN users ON comments.user_id=users.id
+    """).fetchall()
+    db.close()
+    return render_template("index.html",posts=posts,liked_posts=liked_posts,
+    comments=comments,users=users,search_posts=search_posts,query=query)
 @app.route("/post",methods=["POST"])
 def post():
     if "user_id" not in session:

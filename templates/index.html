@@ -83,14 +83,45 @@
 <body>
 <div class="header-section">
 <h1>Echo</h1>
+<form action="/search" method="get">
+    <input type="text" name="q" placeholder="検索" value="{{ query if query else '' }}">
+    <button type="submit">🔍</button>
+</form>
+<hr>
 <form action="/post" method="post">
-<input type="text" name="content" placeholder="書き込み" required>
-<button type="submit">投稿</button>
+    <input type="text" name="content" placeholder="書き込み" required>
+    <button type="submit">投稿</button>
 </form>
 </div>
 
 <div class="main-content">
 <div class="list-container">
+    {% if query %}
+    <div style="display:flex; justify-content:space-between;">
+        <h3 style="color: #444;">「{{ query }}」の検索結果</h3>
+        <a href="/">×</a>
+    </div>
+        <hr>
+        <h4 style="color: #666;">ユーザー</h4>
+        {% for u in users %}
+            <div style="background: white; padding: 10px; border-radius: 8px; margin-bottom: 5px;">
+                <a href="/user/{{ u['id'] }}">{{ u['username'] }}</a>
+            </div>
+        {% else %}
+            <p style="color: gray;">ユーザーが見つかりませんでした</p>
+        {% endfor %}
+    
+        <h4 style="color: #666;">投稿</h4>
+        {% for p in search_posts %}
+            <div style="background: white; padding: 10px; border-radius: 8px; margin-bottom: 5px;">
+                <a href="/user/{{ p['user_id'] }}"><strong>{{ p['username'] }}</strong></a>: {{ p['content'] }}
+            </div>
+        {% else %}
+            <p style="color: gray;">投稿が見つかりませんでした</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+<hr>
 <ul>
 {% for p in posts %}
 <li style="display:block; padding: 15px; border: 1px solid #eee; margin-bottom: 10px;">
