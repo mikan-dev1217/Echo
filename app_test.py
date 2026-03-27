@@ -1,4 +1,5 @@
 from flask import Flask,render_template,request,redirect,session
+from werkzeug.security import generate_password_hash,check_password_hash 
 import sqlite3
 app=Flask(__name__)
 app.secret_key="secret"
@@ -47,6 +48,7 @@ def register():
     if request.method=="POST":
         username=request.form["username"]
         password=request.form["password"]
+        realname=request.form["realname"]
         db=get_db()
         user=db.execute(
             "SELECT * FROM users WHERE username=?",
@@ -55,8 +57,8 @@ def register():
         if user:
             return "そのユーザー名は使われている"
         db.execute(
-            "INSERT INTO users(username,password)VALUES(?,?)",
-            (username,password)
+            "INSERT INTO users(username,password,realname)VALUES(?,?,?)",
+            (username,generate_password_hash(password),realname)
         )
         db.commit()
         db.close()
@@ -75,6 +77,36 @@ def follow(user_id):
     db.commit()
     db.close()
     return redirect("/")
+@app.route("/messages/send/<int:user_id>",methods=["POST"])
+def send_message(user_id):
+    if "user_id" not in session:
+        return redirect ("/register")
+    sender_id=session["user_id"]
+    content=request.form["content"]
+    db=get_db()
+    db.execute(
+        "INSERT INTO messages(sender_id,content,receiver_id) VALUES(?,?,?)",
+        (sender_id,content,user_id)
+    )
+    db.commit()
+    db.close()
+    return redirect("/")
+@app.route("/messages/<int:user_id>")
+def talking(user_id):
+    if "user_id" not in session:
+        return redirect("/register")
+    sender_id=session["user_id"]
+    db=get_db()
+    messages=db.execute("""
+        SELECT messages.content,messages.created_at,messages.sender_id,messages.receiver_id,
+        users.username
+        FROM messages
+        JOIN users ON messages.sender_id=users.id
+        WHERE (sender_id=? AND receiver_id=?) OR (sender_id=? AND receiver_id=?)
+        ORDER BY messages.created_at ASC
+    """,(sender_id,user_id,user_id,sender_id)).fetchall()
+    db.close()
+    return render_template("talking.html",messages=messages)
 @app.route("/login",methods=["GET","POST"])
 def login():
     if request.method=="POST":
@@ -82,11 +114,11 @@ def login():
         password=request.form["password"]
         db=get_db()
         user=db.execute(
-            "SELECT id FROM users WHERE username=? AND password=?",
-            (username,password)
+            "SELECT id, password FROM users WHERE username=?",
+            (username,)
         ).fetchone()
         db.close()
-        if user:
+        if user and check_password_hash(user["password"],password):
             session["user_id"]=user[0]
             return redirect("/")
         if not user:
@@ -143,6 +175,19 @@ def comment(post_id):
     db.commit()
     db.close()
     return redirect("/")
+@app.route("/unfollow/<int:user_id>",methods=["POST"])
+def unfollow(user_id):
+    if "user_id" not in session:
+        return redirect("/register")
+    me=session["user_id"]
+    db=get_db()
+    db.execute(
+        "DELETE FROM follows WHERE follow_id=? AND following_id=?",
+        (me,user_id)
+    )
+    db.commit()
+    db.close()
+    return redirect("/")
 @app.route("/user/<int:user_id>")
 def profile(user_id):
     db = get_db()
@@ -154,8 +199,12 @@ def profile(user_id):
         "SELECT content, created_at FROM posts WHERE user_id=? ORDER BY created_at DESC", 
         (user_id,)
     ).fetchall()
+    is_following=db.execute(
+        "SELECT * FROM follows WHERE follow_id=? AND following_id=?",
+        (session.get("user_id"),user_id)
+    ).fetchone()
     db.close()
-    return render_template("profile.html", user=user, posts=posts,user_id=user_id)
+    return render_template("profile.html",is_following=is_following, user=user, posts=posts,user_id=user_id)
 @app.route("/edit_profile",methods=["GET","POST"])
 def edit_profile():
     if "user_id" not in session:

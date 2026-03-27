@@ -1,7 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        background-color: #e4dce8;
+        font-family: sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    form {
+        background-color: white;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        list-style: none;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        display:block;
+        justify-content:space-between;
+        align-items:center;
+    }
+    .header-section {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 40px 20px 20px 20px;
+    }
+    input[type="text"],input[type="password"]{
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 70%;
+        outline: none;
+    }
+    button {
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #1557b0;
+    }
+</style>
 <title>ログイン</title>
+</head>
 <h1>ログイン</h1>
+<body>
+<div class="header-section">
 <form method="post">
-<input name="username"placeholder="ユーザー名（本名は避けてねー）"required>
+<input type="text"name="username"placeholder="ユーザー名（本名は避けてねー）"required>
 <input name="password"type="password"placeholder="パスワード"required>
 <button>ログイン</button>
 </form>
+</div>
+</body>
+</html>

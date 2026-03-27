@@ -5,7 +5,8 @@ db.execute("""
 CREATE TABLE IF NOT EXISTS users(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT,
-    password TEXT
+    password TEXT,
+    realname TEXT
 )
 """)
 
@@ -41,6 +42,15 @@ CREATE TABLE IF NOT EXISTS follows(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     follow_id INTEGER,
     following_id INTEGER
+)
+""")
+db.execute("""
+CREATE TABLE IF NOT EXISTS messages(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender_id INTEGER,
+    receiver_id INTEGER,
+    content TEXT,
+    created_at TIMESTAMP DEFAULT (DATETIME('now','localtime'))
 )
 """)
 try:

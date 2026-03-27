@@ -159,14 +159,19 @@
                 <button type="submit" style="background-color: #666; font-size: 0.8em; padding: 5px 10px;">削除</button>
             </form>
             {% endif %}
-
+            {% if session["user_id"] == p["user_id"] %}
+            <span style="color: #1a73e8; font-size: 1em; padding: 10px;">
+                👍{{ p["likes"] }}
+            </span>
+        {% else %}
             <form action="/like/{{ p['id'] }}" method="post" style="display:inline;">
                 <button type="submit"
                     style="background-color: {% if p['id'] in liked_posts %}red{% else %}#1a73e8{% endif %};">
                     👍{{ p["likes"] }}
                 </button>
             </form>
-        </div>
+        {% endif %}
+    </div>
     </div>
 </li>
 {% endfor %}
