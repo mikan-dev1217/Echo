@@ -63,6 +63,10 @@ try:
 except sqlite3.OperationalError:
     print("commentsテーブルにlikesカラムはすでにあるのでスキップしました")
 
+try:
+    db.execute("ALTER TABLE messages ADD COLUMN is_read INTEGER DEFAULT 0;")
+except sqlite3.OperationalError:
+    print("messagesテーブルにis_readカラムはすでにあるのでスキップしました")
 db.commit()
 db.close()
 print("DBの準備が完了しました！")

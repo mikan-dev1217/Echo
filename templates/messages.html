@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,7 +33,6 @@
         outline: none;
     }
     a{
-        background-color: #1a73e8;
         color: white;
         border: none;
         padding: 10px 20px;
@@ -42,17 +40,6 @@
         cursor: pointer;
     }
     a:hover {
-        background-color: #1557b0;
-    }
-    button {
-        background-color: #1a73e8;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    button:hover {
         background-color: #1557b0;
     }
     ul{
@@ -68,11 +55,21 @@
         gap:10px;
     }
 </style>
-<title>ログアウト</title>
 </head>
 <body>
-<h1>ログアウトしました</h1>
-<hr>
-<a href="/register">登録する</a>
-<a href="/login">ログインする</a>
+    <h1>メッセージ一覧</h1>
+    {% for t in talks %}
+    <div style="background:white; padding:15px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+        <a href="/messages/{{t['partner_id']}}"style="background-color:#1557b0;color:white;">{{ t['partner_name']}}</a>
+        {% if t['unread']>0 %}
+            <span style="background:red; color:white; border-radius:50%; padding:2px 8px;">{{ t['unread']}}</span>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <div style="position:fixed;left:0; bottom:0; width:100%; background:black; color:white;border-top:1px solid #ddd; display:flex; justify-content:space-around; padding:20px;">
+        <a href="/"style="color:white;">🏠</a>
+        <a href="/messages"style="color:white;">✉️</a>
+        <a href="/user/{{ session['user_id'] }}"style="color:white;">👤</a>
+    </div>
 </body>
+</html>

@@ -9,17 +9,13 @@
         padding: 0;
     }
     form {
-        background-color: white;
-        border: 1px solid #eee;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 15px;
-        list-style: none;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        display:block;
-        justify-content:space-between;
-        align-items:center;
-    }
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        background: none;
+        border: none;
+        box-shadow: none;
+}
     .header-section {
         max-width: 600px;
         margin: 0 auto;
@@ -32,6 +28,16 @@
         width: 70%;
         outline: none;
     }
+    .dm-button{
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        display:inline-block;
+        text-decoration:none;
+    }
     button {
         background-color: #1a73e8;
         color: white;
@@ -39,6 +45,7 @@
         padding: 10px 20px;
         border-radius: 4px;
         cursor: pointer;
+        width: 100%;
     }
     button:hover {
         background-color: #1557b0;
@@ -51,12 +58,17 @@
         outline: none;
         background-color:white;
     }
+    .button-location{
+        display:flex; 
+        gap:10px;
+    }
 </style>
-</head>
 <title>{{user["username"]}}</title>
+</head>
 <body>
 <h1>{{user["username"]}}のプロフィール</h1>
 <hr>
+<div class="button-location">
 {% if is_following %}
     <form action="/unfollow/{{user['id']}}"method="post">
         <button type="submit"style="background-color: red;">フォロー解除</button>
@@ -66,6 +78,10 @@
         <button type="submit">フォロー</button>
     </form>
 {% endif %}
+{% if session["user_id"]!= user_id %}
+    <a href="/messages/{{user['id']}}"class="dm-button">DM</a>
+{% endif %}
+</div>
 <hr>
 <ul>
 <h2>過去の投稿</h2>
@@ -80,5 +96,10 @@
 {%endif%}
 <a href="/">戻る</a>
 </ul>
+<div style="position:fixed;left:0; bottom:0; width:100%; background:black; color:white;border-top:1px solid #ddd; display:flex; justify-content:space-around; padding:20px;">
+    <a href="/"style="color:white;">🏠</a>
+    <a href="/messages"style="color:white;">✉️</a>
+    <a href="/user/{{ session['user_id'] }}"style="color:white;">👤</a>
+</div>
 </body>
 </html>

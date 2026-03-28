@@ -31,8 +31,14 @@ def home():
     FROM comments
     JOIN users ON comments.user_id=users.id
     """).fetchall()
+    dm_senders=db.execute("""
+    SELECT DISTINCT messages.sender_id, users.username 
+    FROM messages
+    JOIN users ON messages.sender_id=users.id
+    WHERE receiver_id=?
+    """,(user_id,)).fetchall()
     db.close()
-    return render_template("index.html",posts=posts,liked_posts=liked_posts,comments=comments)
+    return render_template("index.html",dm_senders=dm_senders,posts=posts,liked_posts=liked_posts,comments=comments)
 @app.route("/delete/<int:post_id>",methods=["POST"])
 def delete(post_id):
     db=get_db()
@@ -90,7 +96,27 @@ def send_message(user_id):
     )
     db.commit()
     db.close()
-    return redirect("/")
+    return redirect(f"/messages/{user_id}")
+@app.route("/messages")
+def messages():
+    if "user_id" not in session:
+        return redirect("/register")
+    me=session["user_id"]
+    db=get_db()
+    talks=db.execute("""
+        SELECT 
+            CASE WHEN sender_id=? THEN receiver_id ELSE sender_id END as partner_id,
+            users.username as partner_name,
+            MAX(messages.created_at) as last_time,
+            SUM(CASE WHEN is_read=0 AND receiver_id=? THEN 1 ELSE 0 END) as unread
+        FROM messages
+        JOIN users ON users.id=CASE WHEN sender_id=? THEN receiver_id ELSE sender_id END
+        WHERE sender_id=? OR receiver_id=?
+        GROUP BY partner_id
+        ORDER BY last_time DESC
+    """,(me,me,me,me,me)).fetchall()
+    db.close()
+    return render_template("messages.html",talks=talks)
 @app.route("/messages/<int:user_id>")
 def talking(user_id):
     if "user_id" not in session:
@@ -105,8 +131,13 @@ def talking(user_id):
         WHERE (sender_id=? AND receiver_id=?) OR (sender_id=? AND receiver_id=?)
         ORDER BY messages.created_at ASC
     """,(sender_id,user_id,user_id,sender_id)).fetchall()
+    db.execute(
+    "UPDATE messages SET is_read=1 WHERE sender_id=? AND receiver_id=?",
+    (user_id, sender_id)
+    )
+    db.commit()
     db.close()
-    return render_template("talking.html",messages=messages)
+    return render_template("talking.html",messages=messages,user_id=user_id)
 @app.route("/login",methods=["GET","POST"])
 def login():
     if request.method=="POST":

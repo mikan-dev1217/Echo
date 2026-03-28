@@ -63,12 +63,14 @@
         width: fit-content;
         box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
-    }
 </style>
 <title>タイトル</title>
 </head>   
 <body>
-<h1>タイトル</h1>
+<div style="display:flex; align-items:center; gap:10px;">
+    <a href="/" style="font-size:1.5em;font-weight:bold;">&lt;</a>
+    <h1>タイトル</h1>
+</div>
 {% for m in messages %}
 {% if m["sender_id"]==session["user_id"] %}
 <div class="my-message">
@@ -81,10 +83,15 @@
 {% endif %}
 {% endfor %}
 <div style="position: sticky; bottom: 0; background: white; padding: 20px; border-top: 1px solid #ddd;">
-    <form action="/send_message/{{ partner_id }}" method="post" style="box-shadow: none; padding: 0;">
+    <form action="/messages/send/{{ user_id }}" method="post" style="box-shadow: none; padding: 0;">
         <input type="text" name="content" placeholder="メッセージを入力..." required style="width: 80%;">
         <button type="submit">送信</button>
     </form>
+</div>
+<div style="position:fixed;left:0; bottom:0; width:100%; background:black; color:white;border-top:1px solid #ddd; display:flex; justify-content:space-around; padding:20px;">
+    <a href="/"style="color:white;">🏠</a>
+    <a href="/messages"style="color:white;">✉️</a>
+    <a href="/user/{{ session['user_id'] }}"style="color:white;">👤</a>
 </div>
 </body>
 </html>
