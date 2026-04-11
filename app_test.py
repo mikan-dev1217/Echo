@@ -1,6 +1,7 @@
 from flask import Flask,render_template,request,redirect,session
 from werkzeug.security import generate_password_hash,check_password_hash 
 import sqlite3
+import os
 app=Flask(__name__)
 app.secret_key="secret"
 def get_db():
@@ -301,7 +302,7 @@ def profile(user_id):
         (user_id,)
     ).fetchone()[0]
     user = db.execute(
-        "SELECT id,username FROM users WHERE id=?", 
+        "SELECT id,username,icon FROM users WHERE id=?", 
         (user_id,)
     ).fetchone()
     posts = db.execute(
@@ -322,6 +323,7 @@ def edit_profile():
     user_id=session["user_id"]
     if request.method=="POST":
         new_name=request.form["username"]
+        icon=request.files.get("icon")
         existing=db.execute(
             "SELECT * FROM users WHERE username=? AND id!=?",
             (new_name,user_id)
@@ -333,11 +335,18 @@ def edit_profile():
             "UPDATE users SET username=? WHERE id=?",
             (new_name,user_id)
         )
+        if icon and icon.filename !="":
+            filename=f"{user_id}_{icon.filename}"
+            icon.save(f"static/icons/{filename}")
+            db.execute(
+                "UPDATE users SET icon=? WHERE id=?",
+                (filename,user_id)
+            )
         db.commit()
         db.close()
         return redirect(f"/user/{user_id}")
     user=db.execute(
-        "SELECT username FROM users WHERE id=?",
+        "SELECT username,icon FROM users WHERE id=?",
         (user_id,)
     ).fetchone()
     db.close()

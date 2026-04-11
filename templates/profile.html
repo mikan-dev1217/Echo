@@ -61,17 +61,32 @@
     .button-location{
         display:flex; 
         gap:10px;
+        justify-content:center;
     }
 </style>
 <title>{{user["username"]}}</title>
 </head>
 <body>
 <div style="display:flex; justify-content:space-between; align-items:center;">
-    <h1>{{user["username"]}}のプロフィール</h1>
+    <div style="width:106.66px;"></div>
+    
+    <div style="display:flex; flex-direction:column; align-items:center;">
+        {% if user["icon"] %}
+            <img src="{{ url_for('static', filename='icons/' + user['icon']) }}" style="width:80px; height:80px; border-radius:50%;">    
+        {% else %}
+            <div style="display:flex; align-items:center; justify-content:center; color:white; font-size:2em;background-color:#acc1dd;width:80px; height:80px; border-radius:50%;">
+                {{user["username"][0]}}
+            </div>
+        {% endif %}
+        <h1>{{user["username"]}}</h1>
+    </div>
+    
     {% if session["user_id"]==user_id %}
         <form action="/logout" method="post">
             <button type="submit" style="background-color: #dc3545;">ログアウト</button>
         </form>
+    {% else %}
+        <div style="width:106.66px;"></div>
     {% endif %}
 </div>
 <div style="display:flex; gap:40px; text-align:center; margin:0 auto; width:fit-content;">    <div>

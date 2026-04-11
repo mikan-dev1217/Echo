@@ -1,6 +1,91 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        background-color: #e4dce8;
+        font-family: sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    form {
+        background-color: white;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        list-style: none;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        display:block;
+        justify-content:space-between;
+        align-items:center;
+    }
+    .header-section {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 40px 20px 20px 20px;
+    }
+    input[type="text"],input[type="password"]{
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 70%;
+        outline: none;
+    }
+    a{
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    a:hover {
+        background-color: #1557b0;
+    }
+    button {
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #1557b0;
+    }
+    ul{
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 100%;
+        outline: none;
+        background-color:white;
+    }
+    .button-location{
+        display:flex; 
+        gap:10px;
+    }
+</style>
 <title>編集</title>
+</head>
+<body>
 <h1>プロフィール編集</h1>
-<form method="post">
+<form method="post" enctype="multipart/form-data">
+    {% if user["icon"] %} 
+        <img style="width:80px;height:80px;border-radius:50%;"src="{{ url_for('static', filename='icons/' + user['icon']) }}"
+            onclick="document.getElementById('icon-input').click()"
+            style="cursor:pointer;">
+    {% else %} 
+        <div onclick="document.getElementById('icon-input').click()"
+            style="cursor:pointer;">
+            {{user["username"][0]}}
+        </div>
+    {% endif %}
+    <input id="icon-input"accept="image/*"style="display:none"type="file"name="icon">
     <input type="text" name="username"value="{{user['username']}}"required>
     <button type="submit">変更</button>
 </form>
+</body>
+</html>
