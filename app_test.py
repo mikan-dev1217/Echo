@@ -17,6 +17,13 @@ def home():
     if not "user_id" in session:
         return redirect("/register")
     db=get_db()
+    user=db.execute(
+        "SELECT is_banned FROM users WHERE id=?",
+        (user_id,)
+    ).fetchone()
+    if user and user["is_banned"] == 1:
+        session.clear()
+        return redirect("/login")
     liked_posts=[]
     if user_id:
         liked_posts=db.execute(
@@ -58,9 +65,12 @@ def admin():
         return redirect("/login")
     db=get_db()
     user=db.execute(
-        "SELECT is_admin FROM users WHERE id=?",
+        "SELECT is_admin, is_banned FROM users WHERE id=?",
         (session["user_id"],)
     ).fetchone()
+    if user and user["is_banned"] == 1:
+        session.clear()
+        return redirect("/login")
     if not user or user["is_admin"] != 1:
         return "アクセス権限がありません"
     query=request.args.get("q","")
@@ -83,7 +93,7 @@ def delete_user(user_id):
     if not user or user["is_admin"] != 1:
         return "アクセス権限がありません"
     db.execute(
-        "DELETE FROM users WHERE id=?",
+        "UPDATE users SET is_banned=1 WHERE id=?",
         (user_id,)
     )
     db.commit()
@@ -172,6 +182,13 @@ def register():
         db.execute(
             "INSERT INTO users(username,password,realname)VALUES(?,?,?)",
             (username,generate_password_hash(password),realname)
+        )
+
+        user_id = db.execute("SELECT id FROM users WHERE username=?", (username,)).fetchone()[0]
+
+        db.execute(
+            "UPDATE invite_codes SET is_used=1, used_by=? WHERE code=?",
+            (user_id, invite_code)
         )
         db.commit()
         db.close()
@@ -266,9 +283,12 @@ def login():
         password=request.form["password"]
         db=get_db()
         user=db.execute(
-            "SELECT id, password FROM users WHERE username=?",
+            "SELECT id, password, is_banned FROM users WHERE username=?",
             (username,)
         ).fetchone()
+        if user:
+            if user["is_banned"] == 1:
+                return "あなたは管理者にBANされました"
         db.close()
         if user and check_password_hash(user["password"],password):
             session["user_id"]=user[0]

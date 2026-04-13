@@ -1,4 +1,5 @@
 import sqlite3
+from werkzeug.security import generate_password_hash
 
 db = sqlite3.connect("database.db")
 db.execute("""
@@ -99,9 +100,36 @@ try:
 except sqlite3.OperationalError:
     print("すでにあるのでスキップ")
 try:
+    db.execute("ALTER TABLE users ADD COLUMN is_banned INTEGER DEFAULT 0;")
+except sqlite3.OperationalError:
+    print("usersテーブルにis_bannedカラムはすでにあるのでスキップしました")
+try:
     db.execute("ALTER TABLE users ADD COLUMN icon TEXT;")
 except sqlite3.OperationalError:
     print("usersテーブルにiconカラムはすでにあるのでスキップしました")
 db.commit()
+
+# 初期管理者ユーザーを作成
+try:
+    db.execute(
+        "INSERT INTO users(username, password, realname, is_admin) VALUES(?, ?, ?, ?)",
+        ("admin", generate_password_hash("admin123"), "管理者", 1)
+    )
+    db.commit()
+    print("初期管理者ユーザーを作成しました (username: admin, password: admin123)")
+except sqlite3.IntegrityError:
+    print("初期管理者ユーザーはすでに存在します")
+
+# 初期招待コードを作成
+try:
+    db.execute(
+        "INSERT INTO invite_codes(code, is_used) VALUES(?, ?)",
+        ("INVITE001", 0)
+    )
+    db.commit()
+    print("初期招待コード INVITE001 を作成しました")
+except sqlite3.IntegrityError:
+    print("初期招待コードはすでに存在します")
+
 db.close()
 print("DBの準備が完了しました！")
