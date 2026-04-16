@@ -54,17 +54,91 @@
         display:flex; 
         gap:10px;
     }
+    .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background-color: #accddd;
+        color: rgb(19, 8, 8);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1em;
+        font-weight: 700;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    .message-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .message-item a {
+        padding: 0;
+        background: none;
+        color: inherit;
+    }
+    .message-item a.profile-link {
+        text-decoration: none;
+    }
+    .message-item a.profile-link:hover {
+        background: none;
+    }
+    .message-item a.message-link {
+        flex-grow: 1;
+        background-color: white;
+        color: black;
+        padding: 10px 20px;
+        border-radius: 4px;
+        text-decoration: none;
+        width:auto;
+    }
+    a:hover {
+        opacity:0.7;
+    }
 </style>
 </head>
 <body>
     <h1>メッセージ一覧</h1>
     {% for t in talks %}
-    <div style="background:white; padding:15px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
-        <a href="/messages/{{t['partner_id']}}"style="background-color:#1557b0;color:white;">{{ t['partner_name']}}</a>
-        {% if t['unread']>0 %}
-            <span style="background:red; color:white; border-radius:50%; padding:2px 8px;">{{ t['unread']}}</span>
-        {% endif %}
-    </div>
+        <a href="/messages/{{t['partner_user_id']}}" style="background:white; padding:15px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 5px rgba(0,0,0,0.05); text-decoration:none; color:black;">
+            <div style="display:flex; gap:10px; align-items:center;">
+                {% if t["partner_icon"] %}
+                    <span class="avatar">
+                        <img src="{{ url_for('static', filename='icons/' + t['partner_icon']) }}">
+                    </span>
+                {% else %}
+                    <span class="avatar">{{ t["partner_name"][0] }}</span>
+                {% endif %}
+                <div>
+                    <div style="font-weight:bold;">
+                        {{ t['partner_name']}}
+                    </div>
+
+                    <div style="color:gray; font-size:0.9em;">
+                        {{ t['last_message'] }}
+                    </div>
+                </div>
+            </div>
+            <div style="text-align:right;">
+                <div style="color:gray; font-size:0.8em;">
+                    {{ t['last_time'] }}
+                </div>
+                {% if t['unread']>0 %}
+                <div style="margin-top:5px;">
+                    <span style="background:#ff3b30;color:white;border-radius:999px;padding:4px 10px;font-size:0.8em;font-weight:bold;">
+                        {{ t['unread']}}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+        </a>
     {% endfor %}
     <div style="position:fixed;left:0; bottom:0; width:100%; background:black; color:white;border-top:1px solid #ddd; display:flex; justify-content:space-around; padding:20px;">
         <a href="/"style="color:white;">🏠</a>

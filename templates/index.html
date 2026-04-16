@@ -89,6 +89,45 @@
     color: #555;
     padding: 0 5px;
     }
+    .post-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+    }
+    .post-author {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: inherit;
+    }
+    .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background-color: #accddd;
+        color: rgb(19, 8, 8);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1em;
+        font-weight: 700;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    .post-time {
+        color: gray;
+        font-size: 0.8em;
+    }
 </style>
 <title>Echo</title>
 </head>
@@ -164,14 +203,20 @@
 <ul>
 {% for p in posts %}
 <li style="display:block; padding: 15px; border: 1px solid #eee; margin-bottom: 10px;">
-    <div>
-        <div style="color: gray; font-size: 0.8em; margin-bottom: 5px;">
-            投稿時間: {{ p["created_at"] }}
-        </div>
-        <a href="/user/{{p['user_id']}}">
-            <strong>{{p["username"]}}</strong>
-        </a>: {{ p["content"] }}    
+    <div class="post-header">
+        <a href="/user/{{p['user_id']}}" class="post-author">
+            {% if p["icon"] %}
+                <span class="avatar">
+                    <img src="{{ url_for('static', filename='icons/' + p['icon']) }}" alt="{{ p['username'] }}のアイコン">
+                </span>
+            {% else %}
+                <span class="avatar">{{ p["username"][0] }}</span>
+            {% endif %}
+            <strong>{{ p["username"] }}</strong>
+        </a>
+        <div class="post-time">投稿時間: {{ p["created_at"] }}</div>
     </div>
+    <div>{{ p["content"] }}</div>
 
     <div class="comments">
         <span class="comment-label">コメント</span>

@@ -62,36 +62,113 @@
         max-width: 70%;
         width: fit-content;
         box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
+    }
+    .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background-color: #accddd;
+        color: rgb(19, 8, 8);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1em;
+        font-weight: 700;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    .partner-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    .partner-header a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: inherit;
+        flex-grow: 1;
+    }
+    .partner-header a:hover {
+        opacity: 0.7;
+    }
+    .partner-info h1 {
+        margin: 0;
+        font-size: 1.2em;
+    }
+    .back-button {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: inherit;
+        text-decoration: none;
+        padding: 0;
+        background: none;
+    }
+    .back-button:hover {
+        background: none;
+    }
 </style>
 <title>{{partner['username']}}</title>
 </head>   
 <body>
-    <div style="display:flex; align-items:center; gap:10px;">
-        <a href="/" style="font-size:1.5em;font-weight:bold;">&lt;</a>
-        <h1>{{partner['username']}}</h1>
+    <div style="padding-bottom: 160px; max-width:600px; margin:0 auto; padding:20px;">
+        <div class="partner-header">
+            <a href="/messages" class="back-button"><</a>
+            <a href="/user/{{partner['id']}}" class="partner-info">
+                {% if partner["icon"] %}
+                    <span class="avatar">
+                        <img src="{{ url_for('static', filename='icons/' + partner['icon']) }}" alt="{{ partner['username'] }}のアイコン">
+                    </span>
+                {% else %}
+                    <span class="avatar">{{ partner["username"][0] }}</span>
+                {% endif %}
+            </a>
+            <div>
+                <h1 style="margin: 0;"><a href="/user/{{partner['id']}}" style="background:none; color:inherit; padding:0; text-decoration:none;">{{partner['username']}}</a></h1>
+            </div>
+        </div>
+        {% for m in messages %}
+        {% if m["sender_id"]==session["user_id"] %}
+        <div class="my-message">
+            {{m["content"]}}
+        </div>
+        {% else %}
+        <div class="your-message">
+            {{m["content"]}}
+        </div>
+        {% endif %}
+        {% endfor %}
+        <div id="bottom">
+        <div style="position: fixed; bottom: 60px; height:35px;width:600px;background: white; padding: 20px; border-top: 1px solid #ddd;">
+            <form action="/messages/send/{{ user_id }}" method="post" style="box-shadow: none; padding: 0;">
+                <input type="text" name="content" placeholder="メッセージを入力..." required style="width: 80%;">
+                <button type="submit">送信</button>
+            </form>
+        </div>
+        </div>
+        <div style="position:fixed;left:0; bottom:140px; bottom:0; width:100%; background:black; color:white;border-top:1px solid #ddd; display:flex; justify-content:space-around; padding:20px;">
+            <a href="/"style="color:white;">🏠</a>
+            <a href="/messages"style="color:white;">✉️</a>
+            <a href="/user/{{ session['user_id'] }}"style="color:white;">👤</a>
     </div>
-{% for m in messages %}
-{% if m["sender_id"]==session["user_id"] %}
-<div class="my-message">
-    {{m["content"]}}
 </div>
-{% else %}
-<div class="your-message">
-    {{m["content"]}}
-</div>
-{% endif %}
-{% endfor %}
-<div style="position: sticky; bottom: 0; background: white; padding: 20px; border-top: 1px solid #ddd;">
-    <form action="/messages/send/{{ user_id }}" method="post" style="box-shadow: none; padding: 0;">
-        <input type="text" name="content" placeholder="メッセージを入力..." required style="width: 80%;">
-        <button type="submit">送信</button>
-    </form>
-</div>
-<div style="position:fixed;left:0; bottom:0; width:100%; background:black; color:white;border-top:1px solid #ddd; display:flex; justify-content:space-around; padding:20px;">
-    <a href="/"style="color:white;">🏠</a>
-    <a href="/messages"style="color:white;">✉️</a>
-    <a href="/user/{{ session['user_id'] }}"style="color:white;">👤</a>
-</div>
+<script>
+window.scrollTo(0, document.body.scrollHeight);
+</script>
 </body>
 </html>

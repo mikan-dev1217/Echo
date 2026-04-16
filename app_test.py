@@ -40,8 +40,12 @@ def home():
         (user_id,)
     )
     db.commit()
+    user=db.execute(
+        "SELECT username,icon FROM users WHERE id=?",
+        (user_id,)
+    ).fetchone()
     posts=db.execute("""
-    SELECT posts.id,posts.content,posts.created_at,users.username,posts.user_id,posts.likes
+    SELECT posts.id,posts.content,posts.created_at,users.username,users.icon,posts.user_id,posts.likes
     FROM posts
     JOIN users ON posts.user_id=users.id
     ORDER BY posts.created_at DESC
@@ -58,7 +62,7 @@ def home():
     WHERE receiver_id=?
     """,(user_id,)).fetchall()
     db.close()
-    return render_template("index.html",notices=notices,dm_senders=dm_senders,posts=posts,liked_posts=liked_posts,comments=comments)
+    return render_template("index.html",user=user,notices=notices,dm_senders=dm_senders,posts=posts,liked_posts=liked_posts,comments=comments)
 @app.route("/admin")
 def admin():
     if "user_id" not in session:
@@ -136,7 +140,7 @@ def topic(topic_name):
     }   
     topic_label = topic_names.get(topic_name, topic_name)
     posts=db.execute("""
-    SELECT posts.id,posts.content,posts.created_at,users.username,posts.user_id,posts.likes
+    SELECT posts.id,posts.content,posts.created_at,users.icon,users.username,users.icon,posts.user_id,posts.likes
     FROM posts
     JOIN users ON posts.user_id=users.id
     WHERE posts.topic=?
@@ -226,7 +230,7 @@ def send_message(user_id):
     )
     db.commit()
     db.close()
-    return redirect(f"/messages/{user_id}")
+    return redirect(f"/messages/{user_id}#bottom")
 @app.route("/messages")
 def messages():
     if "user_id" not in session:
@@ -237,6 +241,9 @@ def messages():
         SELECT 
             CASE WHEN sender_id=? THEN receiver_id ELSE sender_id END as partner_id,
             users.username as partner_name,
+            users.icon as partner_icon,
+            users.id as partner_user_id,
+            MAX(CASE WHEN sender_id=? THEN messages.created_at ELSE NULL END) as last_sent,
             MAX(messages.created_at) as last_time,
             SUM(CASE WHEN is_read=0 AND receiver_id=? THEN 1 ELSE 0 END) as unread
         FROM messages
@@ -244,7 +251,7 @@ def messages():
         WHERE sender_id=? OR receiver_id=?
         GROUP BY partner_id
         ORDER BY last_time DESC
-    """,(me,me,me,me,me)).fetchall()
+    """,(me,me,me,me,me,me)).fetchall()
     db.close()
     return render_template("messages.html",talks=talks)
 @app.route("/messages/<int:user_id>")
@@ -254,7 +261,7 @@ def talking(user_id):
     sender_id=session["user_id"]
     db=get_db()
     partner=db.execute(
-        "SELECT username FROM users WHERE id=?",
+        "SELECT id,username FROM users WHERE id=?",
         (user_id,)
     ).fetchone()
     messages=db.execute("""
@@ -295,6 +302,8 @@ def login():
             return redirect("/")
         if not user:
             return redirect("/register")
+        if check_password_hash(user["password"],password) == False:
+            return "パスワードが違います"
     return render_template("login.html")
 @app.route("/logout",methods=["POST"])
 def logout():
@@ -462,7 +471,7 @@ def search():
     ).fetchall()
     liked_posts=[lp[0] for lp in liked_posts]
     posts=db.execute("""
-    SELECT posts.id,posts.content,posts.created_at,users.username,posts.user_id,posts.likes
+    SELECT posts.id,posts.content,posts.created_at,users.username,users.icon,posts.user_id,posts.likes
     FROM posts
     JOIN users ON posts.user_id=users.id
     ORDER BY posts.created_at DESC
