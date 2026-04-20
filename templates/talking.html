@@ -125,6 +125,29 @@
 </style>
 <title>{{partner['username']}}</title>
 </head>   
+<script>
+setInterval(() => {
+    fetch(location.href)
+    .then(res => res.text())
+    .then(html => {
+        let doc = new DOMParser().parseFromString(html, "text/html");
+
+        let newMessages = doc.querySelectorAll(".your-message, .my-message");
+        let currentMessages = document.querySelectorAll(".your-message, .my-message");
+
+        if(newMessages.length > currentMessages.length){
+            let container = document.querySelector("#bottom");
+
+            // 新しいメッセージだけ追加
+            for(let i = currentMessages.length; i < newMessages.length; i++){
+                container.before(newMessages[i]);
+            }
+
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+    });
+}, 3000);
+</script>
 <body>
     <div style="padding-bottom: 160px; max-width:600px; margin:0 auto; padding:20px;">
         <div class="partner-header">

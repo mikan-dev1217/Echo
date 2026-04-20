@@ -3,7 +3,7 @@
 <head>
 <style>
     body {
-        background-color: #e4dce8;
+        background-color: #e4dce8;        
         font-family: sans-serif;
         margin: 0;
         padding: 0;
@@ -11,7 +11,7 @@
     form {
         background-color: white;
         border: 1px solid #eee;
-        border-radius: 8px;
+        border-radius: 16px;
         padding: 15px;
         margin-bottom: 15px;
         list-style: none;
@@ -39,7 +39,7 @@
         border-radius: 4px;
         cursor: pointer;
     }
-    a:hover {
+    .talk-item:hover {
         background-color: #1557b0;
     }
     ul{
@@ -67,6 +67,10 @@
         font-weight: 700;
         text-transform: uppercase;
         flex-shrink: 0;
+    }
+    body {
+        max-width: 600px;
+        margin: 0 auto;
     }
     .avatar img {
         width: 100%;
@@ -99,37 +103,53 @@
         text-decoration: none;
         width:auto;
     }
+    .talk-item {
+        background:white;
+        padding:15px;
+        border-radius:8px; margin-bottom:10px;
+        display:flex; 
+        justify-content:space-between; 
+        align-items:center; 
+        box-shadow:0 4px 12px rgba(0,0,0,0.08); 
+        text-decoration:none; 
+        color:black;
+    }
     a:hover {
         opacity:0.7;
+    }
+    h1{
+        padding:10px;
     }
 </style>
 </head>
 <body>
     <h1>メッセージ一覧</h1>
     {% for t in talks %}
-        <a href="/messages/{{t['partner_user_id']}}" style="background:white; padding:15px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 5px rgba(0,0,0,0.05); text-decoration:none; color:black;">
+        <a href="/messages/{{t['partner_user_id']}}">
+            <div class="talk-item">
             <div style="display:flex; gap:10px; align-items:center;">
                 {% if t["partner_icon"] %}
                     <span class="avatar">
                         <img src="{{ url_for('static', filename='icons/' + t['partner_icon']) }}">
                     </span>
                 {% else %}
-                    <span class="avatar">{{ t["partner_name"][0] }}</span>
+                    <span class="avatar"style="font-weight:bold;">{{ t["partner_name"][0] }}</span>
                 {% endif %}
                 <div>
                     <div style="font-weight:bold;">
                         {{ t['partner_name']}}
                     </div>
 
-                    <div style="color:gray; font-size:0.9em;">
+                    <div style="flex:1;color:gray; font-size:0.9em;">
                         {{ t['last_message'] }}
                     </div>
                 </div>
             </div>
-            <div style="text-align:right;">
+            <div style="text-align:right;margin-left: auto;">
                 <div style="color:gray; font-size:0.8em;">
                     {{ t['last_time'] }}
                 </div>
+                
                 {% if t['unread']>0 %}
                 <div style="margin-top:5px;">
                     <span style="background:#ff3b30;color:white;border-radius:999px;padding:4px 10px;font-size:0.8em;font-weight:bold;">
@@ -137,6 +157,7 @@
                     </span>
                 </div>
                 {% endif %}
+            </div>
             </div>
         </a>
     {% endfor %}

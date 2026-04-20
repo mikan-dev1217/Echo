@@ -1,0 +1,211 @@
+     .header-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    #menu {
+        left: -250px;
+        transition: left 0.3s;
+    }
+
+    #menu.open {
+        left: 0;
+    }
+    .menu-btn {
+        color: #444;
+        font-size: 1.7em;
+        background:#1a73e8;
+        border: none;
+    }
+
+    .header-right {
+        flex: 1;
+        text-align: right;
+    }
+    body {
+        background-color: #e4dce8;
+        font-family: sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    form {
+        display: flex;
+        gap: 5px;
+    }
+    .logo {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: 'Pacifico', cursive;
+        font-size: 28px;
+    }
+    .header {
+        height:auto;
+        padding: 10px 10px;
+        background: white;
+        border-bottom: 1px solid #ddd;
+        position:fixed;
+        top:0;
+        left:0;
+        width:100%;
+    }
+    .header-section {
+        margin: 0 auto;
+        padding: 15px 20px 20px 20px;
+        max-width:600px;
+        position:relative;
+    }
+    h1 {
+        color: #444;
+        font-size: 2.5em;
+        margin: 0 0 20px 0;
+    }
+    input[type="text"] {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 70%;
+        outline: none;
+        flex:1;
+    }
+    .main-content {
+        background-color: #f8f9fa;
+        min-height: 100vh;
+        padding: 20px;
+        padding-top:120px;
+    }
+    .list-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    ul {
+        padding: 0;
+        margin: 0;
+    }
+    li {
+        background-color: white;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        list-style: none;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        display:block;
+        justify-content:space-between;
+        align-items:center;
+    }
+    button {
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        height:40px;
+    }
+    button:hover {
+        background-color: #1557b0;
+    }
+    .comments {
+        position: relative;
+        border-top: 1px solid #ddd;
+        margin-top: 15px;
+        padding-top: 15px;
+    }
+    .menu-link{
+        display:block;
+        align-items:center;
+        gap:10px;
+        padding:10px;
+        font-size:1.1em;
+        color:#333;
+        text-decoration:none;
+        border-radius:30px;
+        
+
+    }
+    .menu-link:hover{
+        background-color: #f0f0f0;
+    }
+    .comment-label {
+        position: absolute;
+        right: 10px;
+        top: -10px;
+        background: #f8f9fa;
+        font-size: 0.8em;
+        color: #555;
+        padding: 0 5px;
+    }
+    .post-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+    }
+    .post-author {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: inherit;
+    }
+    .topic-bar{
+        box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+        z-index:200;
+        position:fixed;
+        left:-250px;
+        top:0;
+        width:250px;
+        height:100%;
+        background:#e4dce8;
+        transition:left 0.3s;
+    }
+    .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background-color: #accddd;
+        color: rgb(19, 8, 8);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1em;
+        font-weight: 700;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    .post-time {
+        color: gray;
+        font-size: 0.8em;
+    }
+    .header {
+        background-color: white;
+        border-bottom: 1px solid #ddd;
+    }
+    .bottom-bar {
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        background: black;
+        display: flex;
+        justify-content: space-around;
+        padding: 30px 0;
+    }
+    .bottom-bar a {
+        font-size: 20px;
+        display: flex;
+        align-items:center;
+        justify-content:center;
+    }
