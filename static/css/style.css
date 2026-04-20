@@ -3,24 +3,36 @@
         align-items: center;
         justify-content: space-between;
     }
+    .menu-btn {
+        flex: 0;
+        color:black;
+        text-align: left;
+        background:none;
+        font-size: 1.7em;
+        padding: 5px 10px;
+        width: auto;
+    }
+    .logo {
+        position: static;
+        left: 50%;
+        transform: none;
+        font-family: 'Pacifico', cursive;
+        font-size: 28px;
+    }
+    .header-right {
+        flex:0;
+        text-align: right;
+        font-size: 1.3em;
+        padding: 5px 10px;
+        width: auto;
+        background-color:none;
+    }
     #menu {
         left: -250px;
         transition: left 0.3s;
     }
-
     #menu.open {
         left: 0;
-    }
-    .menu-btn {
-        color: #444;
-        font-size: 1.7em;
-        background:#1a73e8;
-        border: none;
-    }
-
-    .header-right {
-        flex: 1;
-        text-align: right;
     }
     body {
         background-color: #e4dce8;
@@ -32,22 +44,16 @@
         display: flex;
         gap: 5px;
     }
-    .logo {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        font-family: 'Pacifico', cursive;
-        font-size: 28px;
-    }
     .header {
         height:auto;
         padding: 10px 10px;
         background: white;
         border-bottom: 1px solid #ddd;
-        position:fixed;
+        position:sticky;
         top:0;
         left:0;
         width:100%;
+        z-index:10000;
     }
     .header-section {
         margin: 0 auto;
@@ -72,7 +78,6 @@
         background-color: #f8f9fa;
         min-height: 100vh;
         padding: 20px;
-        padding-top:120px;
     }
     .list-container {
         max-width: 600px;
@@ -103,7 +108,7 @@
         cursor: pointer;
         height:40px;
     }
-    button:hover {
+    button:not(.menu-btn):hover {
         background-color: #1557b0;
     }
     .comments {
@@ -135,6 +140,7 @@
         font-size: 0.8em;
         color: #555;
         padding: 0 5px;
+        z-index:10;
     }
     .post-header {
         display: flex;
@@ -153,7 +159,7 @@
     }
     .topic-bar{
         box-shadow: 2px 0 5px rgba(0,0,0,0.3);
-        z-index:200;
+        z-index:100000;
         position:fixed;
         left:-250px;
         top:0;
