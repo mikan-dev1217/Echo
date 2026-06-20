@@ -46,7 +46,7 @@
     }
     .header {
         height:auto;
-        padding: 10px 10px;
+        padding: 0px 10px;
         background: white;
         border-bottom: 1px solid #ddd;
         position:sticky;
@@ -207,7 +207,8 @@
         background: black;
         display: flex;
         justify-content: space-around;
-        padding: 30px 0;
+        padding: 20px 0;
+        z-index:10000;
     }
     .bottom-bar a {
         font-size: 20px;

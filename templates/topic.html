@@ -1,178 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style>
-    body {
-        background-color: #e4dce8;
-        font-family: sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-    .header-section {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 40px 20px 20px 20px;
-    }
-    h1 {
-        color: #444;
-        font-size: 2.5em;
-        margin: 0 0 20px 0;
-    }
-    input[type="text"] {
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        width: 70%;
-        outline: none;
-    }
-    .main-content {
-        background-color: #f8f9fa;
-        min-height: 100vh;
-        padding: 20px;
-    }
-    .list-container {
-        max-width: 600px;
-        margin: 0 auto;
-    }
-    ul {
-        padding: 0;
-        margin: 0;
-    }
-    li {
-        background-color: white;
-        border: 1px solid #eee;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 15px;
-        list-style: none;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        display:block;
-        justify-content:space-between;
-        align-items:center;
-    }
-    button {
-        background-color: #1a73e8;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    button:hover {
-        background-color: #1557b0;
-    }
-    .comments {
-    position: relative;
-    border-top: 1px solid #ddd;
-    margin-top: 15px;
-    padding-top: 15px;
-    }
-    .menu-link{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:15px 20px;
-    font-size:1.1em;
-    color:#333;
-    text-decoration:none;
-    border-radius:30px;
-    }
-    .menu-link:hover{
-    background-color: #f0f0f0;
-    }
-    .comment-label {
-    position: absolute;
-    right: 10px;
-    top: -10px;
-    background: #f8f9fa;
-    font-size: 0.8em;
-    color: #555;
-    padding: 0 5px;
-    }
-    .post-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-bottom: 12px;
-    }
-    .post-author {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-        color: inherit;
-    }
-    .avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background-color: #accddd;
-        color: rgb(19, 8, 8);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.1em;
-        font-weight: 700;
-        text-transform: uppercase;
-        flex-shrink: 0;
-        overflow: hidden;
-    }
-    .avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
-    .post-time {
-        color: gray;
-        font-size: 0.8em;
-    }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <title>{{topic_label}}</title>
 </head>
 <body>
-<div class="header-section"style="z-index:100;position:relative;">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-        <button onclick="toggleMenu()" style="background:none;color:#444;font-size:1.5em;width:auto;"><strong>☰</strong></button><h1>{{topic_label}}</h1>
-        {% if "user_id" not in session %}
-            <div>
-                <a href="/login">ログイン</a>
-                <a href="/register">登録</a>
-            </div>
-        {% endif %}
-        <form action="/admin" method="get">
-            <button>管理者モード</button>
-        </form>
+
+<div class="header">
+<div class="header-section">
+
+    <div class="header-top">
+        <button class="menu-btn" onclick="toggleMenu()">
+            <strong>☰</strong>
+        </button>
+
+        <div class="logo">{{topic_label}}</div>
+
+        <div class="header-right">
+            {% if "user_id" not in session %}
+                <span>
+                    <a href="/login">ログイン</a>
+                    <a href="/register">登録</a>
+                </span>
+            {% endif %}
+            <form action="/admin" method="get">
+                <button>🧑‍💻</button>
+            </form>
+        </div>
     </div>
-<form action="/search" method="get">
-    <input type="text" name="q" placeholder="検索" value="{{ query if query else '' }}">
-    <button type="submit">🔍</button>
-</form>
-<hr>
-<form action="/post/{{topic_name}}" method="post">
-    <input type="text" name="content" placeholder="書き込み" required>
-    <button type="submit">投稿</button>
-</form>
+
+    <form action="/search" method="get">
+        <input type="text" name="q" placeholder="検索" value="{{ query if query else '' }}">
+        <button type="submit">🔍</button>
+    </form>
+
+    <hr>
+
+    <form action="/post/{{topic_name}}" method="post">
+        <input type="text" name="content" placeholder="書き込み" required>
+        <button type="submit">投稿</button>
+    </form>
+
 </div>
-<div id="menu" style="box-shadow: 2px 0 5px rgba(0,0,0,0.3);z-index:200;position:fixed;left:-250px;top:0;width:250px;height:100%;background:#e4dce8;transition:left 0.3s;">
+</div>
+
+<div class="topic-bar" id="menu">
     <h2>トピック一覧</h2>
-    <a href="/topic/bukatsu"class="menu-link"style="display:block;padding:10px;">部活</a>
-    <a href="/topic/study"class="menu-link"style="display:block;padding:10px;">勉強</a>
-    <a href="/topic/zatsudan"class="menu-link"style="display:block;padding:10px;">雑談</a>
+    <a href="/topic/bukatsu" class="menu-link">部活</a>
+    <a href="/topic/study" class="menu-link">勉強</a>
+    <a href="/topic/zatsudan" class="menu-link">雑談</a>
 </div>
+
 <div class="main-content">
 <div class="list-container">
-<hr>
+
 <ul>
 {% for p in posts %}
-<li style="display:block; padding: 15px; border: 1px solid #eee; margin-bottom: 10px;">
+<li>
     <div class="post-header">
         <a href="/user/{{p['user_id']}}" class="post-author">
             {% if p["icon"] %}
                 <span class="avatar">
-                    <img src="{{ url_for('static', filename='icons/' + p['icon']) }}" alt="{{ p['username'] }}のアイコン">
+                    <img src="{{ url_for('static', filename='icons/' + p['icon']) }}">
                 </span>
             {% else %}
                 <span class="avatar">{{ p["username"][0] }}</span>
@@ -181,13 +71,14 @@
         </a>
         <div class="post-time">投稿時間: {{ p["created_at"] }}</div>
     </div>
+
     <div>{{ p["content"] }}</div>
 
     <div class="comments">
         <span class="comment-label">コメント</span>
         {% for c in comments %}
             {% if c["post_id"] == p["id"] %}
-                <div class="comment" style="font-size: 0.9em; margin-left: 10px;">
+                <div class="comment">
                     <a href="/user/{{c['id']}}">
                         <strong>{{c["username"]}}</strong>
                     </a>: {{ c["content"] }}
@@ -197,62 +88,57 @@
     </div>
 
     <div style="margin-top:10px;">
-        <form action="/comment/{{p['id']}}" method="post" style="display:inline;">
-            <input type="text" name="content" placeholder="コメント" style="width:50%;" required>
-            <button type="submit" style="padding: 5px 10px; background-color: #1557b0;">送信</button>
+        <form action="/comment/{{p['id']}}" method="post">
+            <input type="text" name="content" placeholder="コメント" required>
+            <button type="submit">送信</button>
         </form>
 
         <div style="margin-top:10px; text-align: right;">
             {% if session["user_id"] == p["user_id"] %}
-            <form action="/delete/{{ p['id'] }}" method="post" style="display:inline;">
-                <button type="submit" style="background-color: #666; font-size: 0.8em; padding: 5px 10px;">削除</button>
-            </form>
+                <form action="/delete/{{ p['id'] }}" method="post">
+                    <button style="background:#666;">削除</button>
+                </form>
+                <span>👍{{ p["likes"] }}</span>
+            {% else %}
+                <form action="/like/{{ p['id'] }}" method="post">
+                    <button>👍{{ p["likes"] }}</button>
+                </form>
             {% endif %}
-            {% if session["user_id"] == p["user_id"] %}
-            <span style="color: #1a73e8; font-size: 1em; padding: 10px;">
-                👍{{ p["likes"] }}
-            </span>
-        {% else %}
-            <form action="/like/{{ p['id'] }}" method="post" style="display:inline;">
-                <button type="submit"
-                    style="background-color: {% if p['id'] in liked_posts %}red{% else %}#1a73e8{% endif %};">
-                    👍{{ p["likes"] }}
-                </button>
-            </form>
-        {% endif %}
-    </div>
+        </div>
     </div>
 </li>
 {% endfor %}
 </ul>
 
 <hr>
+
 <footer style="color: gray; font-size: 0.9em;">
 producer: wataru shiraishi
 </footer>
-<div style="position:fixed;left:0; bottom:0; width:100%; background:black; color:white;border-top:1px solid #ddd; display:flex; justify-content:space-around; padding:20px;">
-    <a href="/"style="color:white;">🏠</a>
-    <a href="/messages"style="color:white;">✉️</a>
-    <a href="/user/{{ session['user_id'] }}"style="color:white;">👤</a>
+
+<div class="bottom-bar">
+    <a href="/" style="color:white;">🏠</a>
+    <a href="/messages" style="color:white;">✉️</a>
+    <a href="/user/{{ session['user_id'] }}" style="color:white;">👤</a>
+</div>
+
 </div>
 </div>
-</div>
+
 <script>
-    function toggleMenu() {
+function toggleMenu() {
+    const menu = document.getElementById("menu");
+    menu.classList.toggle("open");
+}
+
+document.addEventListener("click",function(e){
     const menu=document.getElementById("menu")
-    if (menu.style.left==="-250px"){
-        menu.style.left="0px"
-    }else{
-        menu.style.left="-250px"
+    const button=document.querySelector("[onclick='toggleMenu()']")
+    if(!menu.contains(e.target) && !button.contains(e.target)){
+        menu.classList.remove("open");
     }
-    }
-    document.addEventListener("click",function(e){
-        const menu=document.getElementById("menu")
-        const button=document.querySelector("[onclick='toggleMenu()']")
-        if(!menu.contains(e.target) && !button.contains(e.target)){
-            menu.style.left="-250px"
-        }
-    })
+})
 </script>
+
 </body>
 </html>
